@@ -24,7 +24,7 @@ module.exports = {
   'testRegex': '(/__tests__/.*|(\\.|/)(test|spec))\\.(j|t)sx?$',
 
   // The test environment that will be used for testing
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
 
   // A map from regular expressions to paths to transformers
   transform: {

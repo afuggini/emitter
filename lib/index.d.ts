@@ -1,8 +1,5 @@
-export default class {
-    private events;
-    constructor();
-    on(event: string, listener: Function): () => void;
-    one(event: string, listener: Function): () => void;
-    off(event: string, listener: Function): void;
-    emit(event: string, ...args: any[]): void;
-}
+import $EventEmitter from './EventEmitter';
+import $PubSub from './PubSub';
+export declare const EventEmitter: typeof $EventEmitter;
+export declare const PubSub: typeof $PubSub;
+export default $PubSub;

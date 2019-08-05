@@ -3,12 +3,13 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "esModuleInterop": true,
+    "lib": ["dom"],
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "lib",
     "target": "es5"
   },
   "include": [
-    "src/index.ts"
+    "src/*.ts"
   ]
 }
