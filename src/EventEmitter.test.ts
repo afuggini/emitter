@@ -1,6 +1,6 @@
 import EventEmitter from './EventEmitter'
 
-fdescribe('Event Handler', () => {
+describe('Event Handler', () => {
   const emitter = new EventEmitter()
 
   it('should trigger event with arguments n times', () => {
