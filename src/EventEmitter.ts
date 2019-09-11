@@ -1,39 +1,40 @@
 export default class {
   private CustomEvent
-  private listeners
+
+  // Register events to call once
+  // for compatibility with IE
+  public registry
 
   constructor (EventClass = global['CustomEvent']) {
     this.CustomEvent = EventClass
-    this.listeners = {}
+    this.registry = {}
   }
 
-  public on (element: Element, eventName: string, listener: EventListener, doAfterEmit?: Function) {
-    if (!this.listeners[eventName]) {
-      this.listeners[eventName] = []
-    }
-    this.listeners[eventName].push(element)
+  private addEventListener (element: Element, eventName: string, listener: EventListener, options?: AddEventListenerOptions) {
     return element.addEventListener(eventName, (event: CustomEvent) => {
-      doAfterEmit && doAfterEmit()
-      listener.apply(null, event.detail)
-    }, false)
+      Array.isArray(event.detail) ? listener.apply(null, event.detail) : listener(event)
+    }, options || false)
   }
 
-  public one (element: Element, eventName: string, listener: EventListener) {
-    const doAfterEmit = () => this.off(element, eventName, listener)
-    return this.on(element, eventName, listener, doAfterEmit)
+  public on (element: Element, eventName: string, listener: EventListener, options?: AddEventListenerOptions) {
+    if (this.registry[eventName]) delete this.registry[eventName]
+    return this.addEventListener(element, eventName, listener, options)
   }
 
-  public off (element: Element, eventName: string, listener: EventListener) {
-    if (!this.listeners[eventName]) return
-    const index = this.listeners[eventName].indexOf(element)
-    if (index === -1) return
-    this.listeners[eventName].splice(index, 1)
-    return element.removeEventListener(eventName, listener, false)
+  public one (element: Element, eventName: string, listener: EventListener, options?: AddEventListenerOptions) {
+    this.registry[eventName] = 1
+    return this.addEventListener(element, eventName, listener, options)
   }
 
-  public emit (element: Element, eventName: string, ...args) {
-    if (!this.listeners[eventName] || !this.listeners[eventName].includes(element)) return
+  public off (element: Element, eventName: string, listener: EventListener, options?: EventListenerOptions) {
+    return element.removeEventListener(eventName, listener, options || false)
+  }
+
+  public dispatch (element: Element | Document | Window, eventName: string, ...args) {
+    if (this.registry[eventName] === 0) return
     const event = new this.CustomEvent(eventName, { detail: args })
-    return element.dispatchEvent(event)
+    const dispatched = element.dispatchEvent(event)
+    if (this.registry[eventName]) this.registry[eventName] = 0
+    return dispatched
   }
 }
