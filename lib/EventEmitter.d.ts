@@ -1,9 +1,10 @@
 export default class {
     private CustomEvent;
-    private listeners;
+    registry: any;
     constructor(EventClass?: any);
-    on(element: Element, eventName: string, listener: EventListener, doAfterEmit?: Function): void;
-    one(element: Element, eventName: string, listener: EventListener): void;
-    off(element: Element, eventName: string, listener: EventListener): void;
-    emit(element: Element, eventName: string, ...args: any[]): boolean;
+    private addEventListener;
+    on(element: Element, eventName: string, listener: EventListener, options?: AddEventListenerOptions): void;
+    one(element: Element, eventName: string, listener: EventListener, options?: AddEventListenerOptions): void;
+    off(element: Element, eventName: string, listener: EventListener, options?: EventListenerOptions): void;
+    dispatch(element: Element | Document | Window, eventName: string, ...args: any[]): boolean;
 }
