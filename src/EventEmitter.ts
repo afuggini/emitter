@@ -11,10 +11,12 @@ export default class {
     if (!this.listeners[eventName]) {
       this.listeners[eventName] = []
     }
-    this.listeners[eventName].push(element)
+    if (this.listeners[eventName].indexOf(element) === -1) {
+      this.listeners[eventName].push(element)
+    }
     return element.addEventListener(eventName, (event: CustomEvent) => {
       doAfterEmit && doAfterEmit()
-      listener.apply(null, event.detail)
+      Array.isArray(event.detail) ? listener.apply(null, event.detail) : listener(event)
     }, false)
   }
 
@@ -32,7 +34,7 @@ export default class {
   }
 
   public emit (element: Element, eventName: string, ...args) {
-    if (!this.listeners[eventName] || !this.listeners[eventName].includes(element)) return
+    if (!this.listeners[eventName] || this.listeners[eventName].indexOf(element) === -1) return
     const event = new this.CustomEvent(eventName, { detail: args })
     return element.dispatchEvent(event)
   }
